@@ -49,15 +49,8 @@ class MainScreen(Screen):
 	def __init__(self, stdscr):
 		super().__init__(stdscr)
 		
-		terminal_map = None
-		dash_map = None
-
-		try:
-			terminal_map = TileMap(codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=terminal_map_raw, rows=5)
-			dash_map = TileMap(codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=dash_map_raw, rows=5)
-		except Exception as e:
-			print(f"Error creating map object: \n {e}")
-			exit(1)
+		terminal_map = TileMap(codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=terminal_map_raw, rows=5)
+		dash_map = TileMap(codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=dash_map_raw, rows=5)
 
 		main_window = curses.newwin(terminal_map.num_rows + dash_map.num_rows + 6, 
 								terminal_map.row_length + 4, 
@@ -80,8 +73,10 @@ class MainScreen(Screen):
 			key = key.lower()
 
 			if key == 'p':
+				self.clear_inputs()
 				return self.change_window("game")
 			elif key == 's':
+				self.clear_inputs()
 				return self.change_window("stat")
 			elif key == 'q':
 				exit()

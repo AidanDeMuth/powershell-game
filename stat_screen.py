@@ -26,6 +26,7 @@ class StatScreen(Screen):
 			key = key.lower()
 
 			if key == 'r':
+				self.clear_inputs()
 				return self.change_window("main")
 			elif key == 'q':
 				exit()

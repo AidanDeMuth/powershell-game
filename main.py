@@ -12,7 +12,6 @@ from tile_map import *
 
 from screen import *
 from screen_manager import *
-from physics_manager import *
 
 FRAMES_PER_SECOND = 10
 TIME_PER_FRAME = (1.0 / FRAMES_PER_SECOND) * (1000)
@@ -39,6 +38,7 @@ def main(stdscr):
 
 		if msvcrt.kbhit():
 			key = msvcrt.getch().decode('utf-8')
+			print(key)
 
 			curr_screen.add_input(key)
 
@@ -47,6 +47,7 @@ def main(stdscr):
 		curr_time = time.perf_counter() * 1000
 
 		if curr_time - last_time >= TIME_PER_FRAME:
+
 			event = curr_screen.handle_input()
 
 			if event:
@@ -57,6 +58,8 @@ def main(stdscr):
 					curr_screen = new_screen
 
 			last_time = curr_time
+
+			curr_screen.tick() ## EVERY FRAME IS A TICK
 
 		## REFRESH
 

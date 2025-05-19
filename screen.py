@@ -69,3 +69,6 @@ class Screen:
 
 	def handle_input(self): # OVERRIDE
 		pass
+
+	def tick(self):
+		pass
