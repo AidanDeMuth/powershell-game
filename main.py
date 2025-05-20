@@ -38,8 +38,6 @@ def main(stdscr):
 
 		if msvcrt.kbhit():
 			key = msvcrt.getch().decode('utf-8')
-			print(key)
-
 			curr_screen.add_input(key)
 
 		## EVENT HANDLER
@@ -60,6 +58,8 @@ def main(stdscr):
 			last_time = curr_time
 
 			curr_screen.tick() ## EVERY FRAME IS A TICK
+
+
 
 		## REFRESH
 

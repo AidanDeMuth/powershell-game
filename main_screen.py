@@ -63,7 +63,12 @@ class MainScreen(Screen):
 		dash_window = curses.newwin(dash_map.num_rows + 1, dash_map.row_length, 10, 3)
 		dash_window.addstr(0, 0, f"{dash_map.string}", color.colors['TITLE_DASH'])
 	
-		self.add_windows([main_window, terminal_window, dash_window])
+		text_window = curses.newwin(6, 20, terminal_map.num_rows + dash_map.num_rows + 6 + 2, 1)
+		text_window.addstr(0, 0, f"(P)lay")
+		text_window.addstr(2, 0, f"(Q)uit")
+		text_window.addstr(4, 0, f"(S)tatistics")
+
+		self.add_windows([main_window, terminal_window, dash_window, text_window])
 
 
 	def handle_input(self):

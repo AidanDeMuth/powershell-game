@@ -11,12 +11,24 @@ from tile_map import *
 N_ROWS = 20
 N_COLUMNS = 60
 
+START_Y = 1
+START_X = 10
+
+## del later
+import random
+##
+
 class GameScreen(Screen):
 	def __init__(self, stdscr):
 		super().__init__(stdscr)
-		self.x_pos = 6
-		self.y_pos = 1
 		
+		# Y, X
+		self.old_pos=[START_Y, START_X]
+		self.new_pos=self.old_pos
+		
+		# Score tracking
+		self.score = 0;
+
 		self.arrays = []
 		self.arrays.append(deque([1] * N_COLUMNS))
 		'''
@@ -26,7 +38,7 @@ class GameScreen(Screen):
 			self.arrays.append(deque([0] * N_COLUMNS))
 		self.arrays.append(deque([1] * N_COLUMNS))
 
-		self.tile_maps = [TileMap(map_data=list(array), codes={0: 0x2800, 1: 0x2591}) for array in self.arrays]
+		self.tile_maps = [TileMap(map_data=list(array), codes={0: 0x2800, 1: 0x2591, 2: 0x2756}) for array in self.arrays]
 		self.ground = len(self.arrays) - 1
 
 		# Each line of the game window will be a string
@@ -35,9 +47,13 @@ class GameScreen(Screen):
 		#
 		# call superclass self.refresh() to display contents
 
-		game_window = curses.newwin(len(self.arrays) + 3, len(self.arrays[0]) + 2, 1, 1)
+		game_window = curses.newwin(len(self.arrays) + 1, len(self.arrays[0]) + 2, 1, 1)
+		menu_window = curses.newwin(6, 20, 1, len(self.arrays[0]) + 2)
+
 		self.game_window = game_window
-		self.add_windows([game_window])
+		self.menu_window = menu_window
+
+		self.add_windows([game_window, menu_window])
 
 		self.write_window()
 
@@ -46,6 +62,11 @@ class GameScreen(Screen):
 		for index, array in enumerate(self.arrays):
 			self.game_window.addstr(index, 0, f"{self.tile_maps[index].string}", color.colors['GAME'])
 
+		self.menu_window.addstr(0, 0, f"Score: {self.score}")
+		self.menu_window.addstr(2, 0, f"(Q)uit")
+		self.menu_window.addstr(4, 0, f"(R)eturn")
+
+
 
 	def handle_input(self):
 		key = self.pop_input()
@@ -53,16 +74,29 @@ class GameScreen(Screen):
 		while key is not None:
 			key = key.lower()
 
-			if key == ' ':
+			print(key)
+
+			if key == 'k': # Down
 
 				## 
 				## IN THIS SECTION, CHECK SURROUNDINGS
-				## AND APPLY THE VELOCITY AND ACCELERATION
 				##
 
+				if self.old_pos[0] < N_ROWS - 2:
+					self.new_pos = [self.old_pos[0] + 1, self.old_pos[1]]
 				self.clear_inputs()
 				return None
-				##  
+				
+			elif key == 'l': # Up
+
+				## 
+				## IN THIS SECTION, CHECK SURROUNDINGS
+				##
+
+				if self.old_pos[0] > 1:
+					self.new_pos = [self.old_pos[0] - 1, self.old_pos[1]]
+				self.clear_inputs()
+				return None
 
 			elif key == 'r':
 				self.clear_inputs()
@@ -73,22 +107,34 @@ class GameScreen(Screen):
 			key = self.pop_input()
 
 	def tick(self):
-		self.arrays[N_ROWS - self.y_pos - 1][self.x_pos] = 0
+		self.arrays[N_ROWS - self.old_pos[0] - 1][self.old_pos[1]] = 2
+		self.tile_maps[N_ROWS - self.old_pos[0] - 1].update_map(self.arrays[N_ROWS - self.old_pos[0] - 1])
 
 		##
 		## IN THIS SECTION, CALCULATE NEW POSITION AND
 		## CHECK COLLISION
 		##
 
+		## RANDOM GEN
 
+		for i in range(1, N_ROWS - 1):
+			array = self.arrays[i]
 
-		for index, array in enumerate(self.arrays):
 			array.popleft()
-			array.append(1)
+			array.append(random.choices([0, 1], weights=[90, 10])[0])
 
-			self.tile_maps[index].update_map(array)
+			self.tile_maps[i].update_map(array)
 
-		self.arrays[N_ROWS - self.y_pos - 1][self.x_pos] = 1
-		self.tile_maps[N_ROWS - self.y_pos - 1].update_map(self.arrays[N_ROWS - self.y_pos - 1])
+		self.arrays[N_ROWS - self.new_pos[0] - 1][self.new_pos[1]] = 1
+		self.tile_maps[N_ROWS - self.new_pos[0] - 1].update_map(self.arrays[N_ROWS - self.new_pos[0] - 1])
+
+		self.old_pos = [self.new_pos[0], self.new_pos[1]]
 
 		self.write_window()
+		self.increase_score()
+
+	def increase_score(self):
+		self.score += 1
+
+	def get_score(self):
+		return self.score

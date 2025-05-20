@@ -14,7 +14,8 @@ class StatScreen(Screen):
 
 		stats_window.addstr(0, 0, f"Highest score: ")
 		stats_window.addstr(2, 0, f"Games played: ")
-		stats_window.addstr(4, 0, f"(R)eturn: ")
+		stats_window.addstr(4, 0, f"(R)eturn")
+		stats_window.addstr(6, 0, f"(Q)uit")
 
 		self.add_windows([stats_window])
 

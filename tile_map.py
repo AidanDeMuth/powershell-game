@@ -8,10 +8,11 @@ num rows,
 '''
 
 class TileMap:
-	def __init__(self, codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=None, rows=1):
+	def __init__(self, codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_name=None, map_data=None, rows=1):
 		if map_data is None:
 			raise ValueError("No map data provided!")
 
+		self.name = map_name
 		self.raw_map = map_data
 		self.num_rows = rows
 		self.row_length = int(len(self.raw_map) / self.num_rows)
