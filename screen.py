@@ -41,7 +41,7 @@ class Screen:
 
 		self.windows.remove(window)
 
-	def change_window(self, screen: str):
+	def change_window(self, screen):
 		return screen
 
 	def refresh(self):
