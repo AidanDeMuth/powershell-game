@@ -5,6 +5,8 @@ from collections import deque
 
 from tile_map import *
 
+import buffer_manager
+
 # GENERIC SCREEN CLASS
 #
 # Any subclass should create windows and maps within the constructor
@@ -72,3 +74,10 @@ class Screen:
 
 	def tick(self):
 		pass
+
+	## Buffer Manager
+	def write_buffer(self, buffer_name, data):
+		buffer_manager.write_buffer(buffer_name, data)
+
+	def read_buffer(self, buffer_name):
+		return buffer_manager.read_buffer(buffer_name)

@@ -45,7 +45,7 @@ def main(stdscr):
 		curr_time = time.perf_counter() * 1000
 
 		if curr_time - last_time >= TIME_PER_FRAME:
-
+			# Input event
 			event = curr_screen.handle_input()
 
 			if event:
@@ -55,9 +55,10 @@ def main(stdscr):
 					print("Screen")
 					curr_screen = new_screen
 
-			last_time = curr_time
 
-			curr_screen.tick() ## EVERY FRAME IS A TICK
+			# Game tick event
+			curr_screen.tick()
+			last_time = curr_time
 
 
 

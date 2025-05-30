@@ -1,13 +1,10 @@
 buffers = {
-	"stats" : [],
-	"death" : [],
+	"stats" : [0, 0], # games played, top score
+	"death" : [], # score
 }
 
-def clear_buffer(buffer):
-	buffers[buffer].clear()
+def read_buffer(buffer_name):
+	return buffers[buffer_name].copy()
 
-def fetch_buffer(buffer):
-	return buffers[buffer].copy()
-
-def set_buffer(buffer, data):
-	buffers[buffer] = data.copy()
+def write_buffer(buffer_name, data):
+	buffers[buffer_name] = data.copy()

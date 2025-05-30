@@ -23,9 +23,10 @@ class GameScreen(Screen):
 		super().__init__(stdscr)
 		
 		# Y, X
-		self.old_pos=[START_Y, START_X]
-		self.new_pos=self.old_pos
-		
+		self.old_pos = [START_Y, START_X]
+		self.new_pos = self.old_pos
+		self.alive = True
+
 		# Score tracking
 		self.score = 0;
 
@@ -38,7 +39,7 @@ class GameScreen(Screen):
 			self.arrays.append(deque([0] * N_COLUMNS))
 		self.arrays.append(deque([1] * N_COLUMNS))
 
-		self.tile_maps = [TileMap(map_data=list(array), codes={0: 0x2800, 1: 0x2591, 2: 0x2756}) for array in self.arrays]
+		self.tile_maps = [TileMap(map_data=list(array), codes={0: 0x2800, 1: 0x2591, 2: 0x2756, 3: 0x2731}) for array in self.arrays]
 		self.ground = len(self.arrays) - 1
 
 		# Each line of the game window will be a string
@@ -69,6 +70,9 @@ class GameScreen(Screen):
 
 
 	def handle_input(self):
+		if not self.alive:
+			return self.change_window("death")
+
 		key = self.pop_input()
 
 		while key is not None:
@@ -107,6 +111,7 @@ class GameScreen(Screen):
 			key = self.pop_input()
 
 	def tick(self):
+		# Create the trail. Set the old position to the trail character
 		self.arrays[N_ROWS - self.old_pos[0] - 1][self.old_pos[1]] = 2
 		self.tile_maps[N_ROWS - self.old_pos[0] - 1].update_map(self.arrays[N_ROWS - self.old_pos[0] - 1])
 
@@ -125,8 +130,25 @@ class GameScreen(Screen):
 
 			self.tile_maps[i].update_map(array)
 
-		self.arrays[N_ROWS - self.new_pos[0] - 1][self.new_pos[1]] = 1
+		# Check new position. If it's a collision, load the new screen
+		if self.arrays[N_ROWS - self.new_pos[0] - 1][self.new_pos[1]] == 1:
+			# Write to death buffer
+			self.write_buffer("death", [self.score])
+			self.alive = False
+
+			# Increment stats buffer
+			stats_buffer = self.read_buffer("stats")
+			if self.score > stats_buffer[0]:
+				stats_buffer[0] = self.score
+			stats_buffer[1] += 1
+			self.write_buffer("stats", stats_buffer)
+			
+			return
+
+
+		self.arrays[N_ROWS - self.new_pos[0] - 1][self.new_pos[1]] = 3
 		self.tile_maps[N_ROWS - self.new_pos[0] - 1].update_map(self.arrays[N_ROWS - self.new_pos[0] - 1])
+
 
 		self.old_pos = [self.new_pos[0], self.new_pos[1]]
 
