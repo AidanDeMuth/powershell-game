@@ -1,12 +1,10 @@
 import math
 
 '''
-Map of names to...
-raw map
-num rows, 
-???priority??
-'''
+tile_map.py
 
+Creates a mapping UTF codes to a N different codes.
+'''
 class TileMap:
 	def __init__(self, codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_name=None, map_data=None, rows=1):
 		if map_data is None:
@@ -22,11 +20,12 @@ class TileMap:
 
 		self.update_utf_data()
 
+	# Sets a new buffer to the entire map
 	def update_map(self, new_map):
 		self.raw_map = new_map
 		self.update_utf_data()
 
-
+	# Converts each numeric value to it's UTF value
 	def update_utf_data(self):
 		self.utf_map = [] 
 		self.string = ""

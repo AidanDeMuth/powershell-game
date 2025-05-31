@@ -13,7 +13,14 @@ from tile_map import *
 from screen import *
 from screen_manager import *
 
-FRAMES_PER_SECOND = 10
+'''
+main.py
+
+Engine for the game, runs an event loop ideally once every frame
+'''
+
+FRAMES_PER_SECOND = 20 # Modify this line to change the framerate
+
 TIME_PER_FRAME = (1.0 / FRAMES_PER_SECOND) * (1000)
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -26,9 +33,8 @@ def main(stdscr):
 	lines = curses.LINES;
 	columns = curses.COLS;
 
+	# Only one screen can be active at a time, so initialize it to your home screen
 	curr_screen = MainScreen(stdscr)
-	
-
 
 	## EVENT LOOP ##
 	last_time = time.perf_counter() * 1000
@@ -52,7 +58,6 @@ def main(stdscr):
 				new_screen = handle_screen(new_screen=event, stdscr=stdscr)
 
 				if isinstance(new_screen, Screen):
-					print("Screen")
 					curr_screen = new_screen
 
 
@@ -60,10 +65,7 @@ def main(stdscr):
 			curr_screen.tick()
 			last_time = curr_time
 
-
-
-		## REFRESH
-
+		# Redraw screens
 		curr_screen.clear()
 		curr_screen.refresh()
 

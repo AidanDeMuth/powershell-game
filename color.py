@@ -1,5 +1,11 @@
 import curses
 
+'''
+color.py
+
+Maintains a dictionary mapping of name to color. Can be optionally used by any Screen() subclass.
+'''
+
 colors = {}
 
 def init_colors():

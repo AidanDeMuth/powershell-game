@@ -6,7 +6,13 @@ from screen import Screen
 
 from tile_map import TileMap
 
-# left right top bottom, top left right, bottom left right
+'''
+main_screen.py
+
+Title screen presenting the game.
+'''
+
+# left, right, top, bottom, top left, top right, bottom left, bottom right
 main_border = [
 	chr(0x25A2), 
 	chr(0x25A2),
@@ -53,8 +59,7 @@ class MainScreen(Screen):
 		dash_map = TileMap(codes={0: 0x2800, 1: 0x2588, 2: 0x2591}, map_data=dash_map_raw, rows=5)
 
 		main_window = curses.newwin(terminal_map.num_rows + dash_map.num_rows + 6, 
-								terminal_map.row_length + 4, 
-								1, 1)
+									terminal_map.row_length + 4, 1, 1)
 		main_window.border(*main_border)
 
 		terminal_window = curses.newwin(terminal_map.num_rows + 1, terminal_map.row_length, 3, 3)

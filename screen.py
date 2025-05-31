@@ -7,23 +7,33 @@ from tile_map import *
 
 import buffer_manager
 
-# GENERIC SCREEN CLASS
-#
-# Any subclass should create windows and maps within the constructor
-# It is also necessary to override input handlers
-# A new instance of a screen should have full functionality
+'''
+GENERIC SCREEN CLASS
+
+Implements basic functionality of window management, input management, global buffer management,
+and game ticks. A game tick is a "frame," or rather the point where new position or state is calculated.
+
+- Any subclass should be fully initialized in it's constructor, meaning windows and maps.
+- It is also necessary to override input handlers to allow for navigation of screens
+'''
 
 class Screen:
-	# For now process inputs like a queue, maybe change later
 	def __init__(self, stdscr):
 		stdscr.clear()
 		stdscr.refresh()
 
+		# Every screen, regardless of what it does, will take from stdin and maintain windows
 		self.inputs = deque()
 		self.stdscr = stdscr
 		self.windows = []
 
-	## WINDOW MANAGER
+	'''
+	WINDOW MANAGEMENT
+
+	Each screen maintains a list of windows, which are iterated over and refreshed every event loop. It is best to add them
+	in the order they appear
+	'''
+
 	def add_window(self, window=None):
 		if window is None:
 			raise ValueError
@@ -53,7 +63,15 @@ class Screen:
 	def clear(self):
 		self.stdscr.clear()
 
-	## INPUT MANAGER
+	'''
+	ÍNPUT MANAGEMENT
+
+	All received inputs every event loop are processed to the current screen's buffer in a queue.
+	Overriding handle_input() is necessary to give each screen it's own functionality
+
+	- For custom input handling these can be overridden
+	'''
+
 	def add_input(self, key_input):
 		self.inputs.append(key_input)
 
@@ -69,13 +87,21 @@ class Screen:
 	def clear_inputs(self):
 		self.inputs.clear()
 
-	def handle_input(self): # OVERRIDE
+	def handle_input(self):
 		pass
+
+	'''
+	STATE MANAGEMENT
+	tick() is an optional function that will run each event loop that will update the state of the game.
+	Override to change the state of a screen.
+
+	write_buffer() - Given a buffer name and data, will write to the global buffers. Can be dynamic or static
+	read_buffer() - Given a buffer name, will return a copy of the global buffer stored by that name	
+	'''
 
 	def tick(self):
 		pass
 
-	## Buffer Manager
 	def write_buffer(self, buffer_name, data):
 		buffer_manager.write_buffer(buffer_name, data)
 

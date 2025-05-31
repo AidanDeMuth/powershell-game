@@ -6,6 +6,12 @@ from screen import Screen
 
 from tile_map import *
 
+'''
+stat_screen.py
+
+Simple screen to display recorded stats from game. Uses global buffers to retrieve
+game stats.
+'''
 class StatScreen(Screen):
 	def __init__(self, stdscr):
 		super().__init__(stdscr)

@@ -6,11 +6,17 @@ from screen import Screen
 
 from tile_map import *
 
+'''
+death_screen.py()
+
+Custom screen implementation for when a player dies in a game.
+'''
+
 class DeathScreen(Screen):
 	def __init__(self, stdscr):
 		super().__init__(stdscr)
 
-		# Get last game data
+		# Get last game data from "death" global buffer
 		game_stats = self.read_buffer("death")
 
 		death_window = curses.newwin(20, 20, 1, 1)

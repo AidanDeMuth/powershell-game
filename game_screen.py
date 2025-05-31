@@ -1,12 +1,19 @@
+import random
+from collections import deque
+
 import curses
 
 import color
 
-from collections import deque
-
 from screen import Screen
 
 from tile_map import *
+
+'''
+game_screen.py
+
+Dynamic game screen implementation. 
+'''
 
 N_ROWS = 20
 N_COLUMNS = 60
@@ -14,15 +21,12 @@ N_COLUMNS = 60
 START_Y = 1
 START_X = 10
 
-## del later
-import random
-##
 
 class GameScreen(Screen):
 	def __init__(self, stdscr):
 		super().__init__(stdscr)
 		
-		# Y, X
+		# Initialize game position
 		self.old_pos = [START_Y, START_X]
 		self.new_pos = self.old_pos
 		self.alive = True
@@ -30,31 +34,23 @@ class GameScreen(Screen):
 		# Score tracking
 		self.score = 0;
 
+
+		'''
+		Create a deque for each row of the screen, with borders on the top and bottom
+		'''
 		self.arrays = []
 		self.arrays.append(deque([1] * N_COLUMNS))
-		'''
-		self.arrays = [deque([0] * N_COLUMNS) for _ in range(N_ROWS - 1)]
-		'''
 		for i in range(0, N_ROWS - 2):
 			self.arrays.append(deque([0] * N_COLUMNS))
 		self.arrays.append(deque([1] * N_COLUMNS))
 
+		# Each tilemap should have the same scheme
 		self.tile_maps = [TileMap(map_data=list(array), codes={0: 0x2800, 1: 0x2591, 2: 0x2756, 3: 0x2731}) for array in self.arrays]
-		self.ground = len(self.arrays) - 1
 
-		# Each line of the game window will be a string
-		#
-		# call write_window() to write deque contents to window
-		#
-		# call superclass self.refresh() to display contents
-
-		game_window = curses.newwin(len(self.arrays) + 1, len(self.arrays[0]) + 2, 1, 1)
-		menu_window = curses.newwin(6, 20, 1, len(self.arrays[0]) + 2)
-
-		self.game_window = game_window
-		self.menu_window = menu_window
-
-		self.add_windows([game_window, menu_window])
+		# Also make each window accessible globally
+		self.game_window = curses.newwin(len(self.arrays) + 1, len(self.arrays[0]) + 2, 1, 1)
+		self.menu_window = curses.newwin(6, 20, 1, len(self.arrays[0]) + 2)
+		self.add_windows([self.game_window, self.menu_window])
 
 		self.write_window()
 
@@ -78,33 +74,25 @@ class GameScreen(Screen):
 		while key is not None:
 			key = key.lower()
 
-			print(key)
-
 			if key == 'k': # Down
-
-				## 
-				## IN THIS SECTION, CHECK SURROUNDINGS
-				##
-
 				if self.old_pos[0] < N_ROWS - 2:
 					self.new_pos = [self.old_pos[0] + 1, self.old_pos[1]]
 				self.clear_inputs()
+
 				return None
 				
 			elif key == 'l': # Up
-
-				## 
-				## IN THIS SECTION, CHECK SURROUNDINGS
-				##
-
 				if self.old_pos[0] > 1:
 					self.new_pos = [self.old_pos[0] - 1, self.old_pos[1]]
 				self.clear_inputs()
+
 				return None
 
 			elif key == 'r':
 				self.clear_inputs()
+
 				return self.change_window("main")
+
 			elif key == 'q':
 				exit()
 
@@ -115,13 +103,7 @@ class GameScreen(Screen):
 		self.arrays[N_ROWS - self.old_pos[0] - 1][self.old_pos[1]] = 2
 		self.tile_maps[N_ROWS - self.old_pos[0] - 1].update_map(self.arrays[N_ROWS - self.old_pos[0] - 1])
 
-		##
-		## IN THIS SECTION, CALCULATE NEW POSITION AND
-		## CHECK COLLISION
-		##
-
-		## RANDOM GEN
-
+		# Randomly generate the obstacles in the playable rows
 		for i in range(1, N_ROWS - 1):
 			array = self.arrays[i]
 
@@ -145,10 +127,9 @@ class GameScreen(Screen):
 			
 			return
 
-
+		# Since there is no collision, set the new player position to the calculated position
 		self.arrays[N_ROWS - self.new_pos[0] - 1][self.new_pos[1]] = 3
 		self.tile_maps[N_ROWS - self.new_pos[0] - 1].update_map(self.arrays[N_ROWS - self.new_pos[0] - 1])
-
 
 		self.old_pos = [self.new_pos[0], self.new_pos[1]]
 
@@ -157,6 +138,3 @@ class GameScreen(Screen):
 
 	def increase_score(self):
 		self.score += 1
-
-	def get_score(self):
-		return self.score
