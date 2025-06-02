@@ -25,7 +25,7 @@ The event loop uses fixed time steps to run based on the set value of `FRAMES_PE
 To allow for cross communication of screens, modules `screen_manager` and `buffer_manager` are implemented. The screen manager can generate and change the `curr_screen` object if requested by the event handler, and the buffer manager maintains lists accessible by each screen to store and retrieve necessary data between screen changes.
 
 #### Tile Maps
-In general gaming/application development, screens and art are manually created by developers/designers, and the same must be done here. A `TileMap` object represents the content of a curses window by transforming an array of `N` integers `0, 1, 2, ... , N-1` into Unicode characters using a dictionary mapping. The Unicode string can be extracted from the `TileMap` object, and written to a window using `<window>.addstr(<map>.string)`.
+In general gaming/application development, screens and art are manually created by developers/designers, and the same must be done here. A `TileMap` object represents the content of a curses window by transforming an array of integers numbered `0, 1, 2, ... , N-1` into Unicode characters using a dictionary mapping. The Unicode string can be extracted from the `TileMap` object, and written to a window using `<window>.addstr(<map>.string)`.
 
 ### Improvements (TODO):
 - Refactor `handle_input()` to `handle_event()` to generalize inputs in the event loop
